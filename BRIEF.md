@@ -8,8 +8,8 @@ aspect: 1920x1080
 fps: 30
 language: en
 audience: students, working professionals and self-taught learners facing long PDFs, lectures and recordings
-length: 60s
-angle: the 192-page dread → Grasp makes it practisable, and every answer points back to its page
+length: 50s
+angle: "The Night Before" — 11:47 PM, 192 pages, one night; Grasp as a live, cursor-driven session
 ---
 
 ## Intent
@@ -38,3 +38,12 @@ big bold words between the screens, cuts on a steady beat."
 - Screens must not be redrawn — show the exported PNGs.
 - No claims of users or launch; it's a coming-soon promo.
 - Render to renders/promo.mp4.
+
+## v2 (requested after v1)
+
+- "Use your highest motion skill", a new story that hooks hard, a real human-sounding voice,
+  no highlight rings — show inputting on the screen so the motion looks real — and sharper.
+- Voice: Kokoro af_heart (user chose Kokoro because HeyGen's API is paid).
+- Sharpness: all hero screens are 2x exports; results is 1.5x; streak modal is a 2x crop.
+  figma.com is still blocked by the network policy, so 3x exports were not possible yet.
+- Output: renders/promo-v2.mp4 (CRF 12).

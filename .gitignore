@@ -4,3 +4,4 @@ renders/*
 .hyperframes/
 node_modules/
 .DS_Store
+!renders/promo-v2.mp4

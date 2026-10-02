@@ -1,0 +1,14 @@
+01|It's eleven forty-seven p.m.
+02|Your exam is on Friday.
+03|And it covers all one hundred and ninety-two pages.
+04|What if you didn't have to read all of it... to understand all of it?
+05|Meet Grasp.
+06|Drop in your PDF.
+07|Grasp reads it with you, then quizzes you on it.
+08|Get one wrong, and it takes you straight to the page where the answer lives.
+09|Flashcards bring back exactly what you keep missing.
+10|Sitting in class? Just hit record.
+11|Missed the lecture? Paste the link.
+12|Come back tomorrow, and you'll know more than you did today.
+13|Grasp. Learn smarter. Grasp anything.
+14|Coming soon.
