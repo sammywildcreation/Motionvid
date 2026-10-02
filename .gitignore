@@ -1,0 +1,6 @@
+snapshots/
+renders/*
+!renders/promo.mp4
+.hyperframes/
+node_modules/
+.DS_Store

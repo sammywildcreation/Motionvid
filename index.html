@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Grasp — Coming Soon</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Cal Sans";
+        src: url("assets/fonts/cal-sans-latin-400-normal.woff2") format("woff2");
+        font-weight: 400;
+      }
+      @font-face {
+        font-family: "Onest";
+        src: url("assets/fonts/onest-latin-400-normal.woff2") format("woff2");
+        font-weight: 400;
+      }
+      @font-face {
+        font-family: "Onest";
+        src: url("assets/fonts/onest-latin-500-normal.woff2") format("woff2");
+        font-weight: 500;
+      }
+      @font-face {
+        font-family: "Onest";
+        src: url("assets/fonts/onest-latin-600-normal.woff2") format("woff2");
+        font-weight: 600;
+      }
+      @font-face {
+        font-family: "Onest";
+        src: url("assets/fonts/onest-latin-700-normal.woff2") format("woff2");
+        font-weight: 700;
+      }
+
+      :root {
+        --orange: #fa5d19;
+        --orange-deep: #e24e10;
+        --ink: #14100e;
+        --ink-2: #241f1c;
+        --canvas: #f3eee8;
+        --white: #ffffff;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--ink);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--ink);
+        font-family: "Onest", sans-serif;
+        color: var(--white);
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      /* ---------- grounds ---------- */
+      .ground {
+        position: absolute;
+        inset: 0;
+      }
+      .ground.dark {
+        background: var(--ink) url("assets/bg/dark.png") center / cover no-repeat;
+      }
+      .ground.orange {
+        background: var(--orange) url("assets/bg/orange.png") center / cover no-repeat;
+      }
+      .ground.light {
+        background: var(--canvas) url("assets/bg/light.png") center / cover no-repeat;
+      }
+
+      /* ---------- screens ---------- */
+      .cam {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1440px;
+        height: 1024px;
+        transform-origin: 0 0;
+        border-radius: 20px;
+        box-shadow:
+          0 2px 6px rgba(20, 16, 14, 0.08),
+          0 40px 120px -30px rgba(20, 16, 14, 0.45);
+      }
+      .cam img.shot {
+        display: block;
+        width: 1440px;
+        height: 1024px;
+        border-radius: 20px;
+      }
+      .ring {
+        position: absolute;
+        border: 4px solid var(--orange);
+        border-radius: 14px;
+        box-shadow: 0 0 0 4000px rgba(20, 16, 14, 0.38);
+        opacity: 0;
+      }
+
+      /* ---------- captions ---------- */
+      .cap {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 76px;
+        display: flex;
+        justify-content: center;
+      }
+      .cap .pill {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        max-width: 1600px;
+        padding: 26px 46px 28px 38px;
+        border-radius: 999px;
+        background: rgba(20, 16, 14, 0.92);
+        box-shadow: 0 24px 60px -20px rgba(20, 16, 14, 0.6);
+        font-family: "Cal Sans", sans-serif;
+        font-size: 58px;
+        line-height: 1.05;
+        letter-spacing: -0.01em;
+        color: var(--white);
+        white-space: nowrap;
+      }
+      .cap .dot {
+        display: block;
+        flex: none;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--orange);
+      }
+      .cap em {
+        font-style: normal;
+        color: #ff8a52;
+      }
+
+      /* ---------- kinetic words ---------- */
+      .words {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-wrap: wrap;
+        align-content: center;
+        justify-content: center;
+        gap: 0 44px;
+        padding: 0 140px;
+        font-family: "Cal Sans", sans-serif;
+        font-size: 190px;
+        line-height: 1.02;
+        letter-spacing: -0.025em;
+        text-align: center;
+      }
+      .words .w {
+        display: block;
+      }
+      .words .accent {
+        color: var(--orange);
+      }
+      .stack {
+        position: absolute;
+        inset: 0;
+      }
+      .stack .w {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Cal Sans", sans-serif;
+        font-size: 260px;
+        letter-spacing: -0.03em;
+        opacity: 0;
+      }
+
+      /* ---------- hook ---------- */
+      .count-wrap {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 48px;
+      }
+      #hook-num {
+        display: block;
+        width: 760px;
+        text-align: right;
+        font-family: "Cal Sans", sans-serif;
+        font-size: 420px;
+        line-height: 1;
+        letter-spacing: -0.04em;
+        color: var(--orange);
+        font-variant-numeric: tabular-nums;
+      }
+      #hook-pages {
+        display: block;
+        font-family: "Cal Sans", sans-serif;
+        font-size: 200px;
+        letter-spacing: -0.03em;
+        opacity: 0;
+      }
+      .scrim-bottom {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 520px;
+        background: linear-gradient(to top, rgba(20, 16, 14, 0.92), rgba(20, 16, 14, 0));
+        opacity: 0;
+      }
+      .big-line {
+        position: absolute;
+        left: 120px;
+        bottom: 110px;
+        font-family: "Cal Sans", sans-serif;
+        font-size: 210px;
+        line-height: 1;
+        letter-spacing: -0.03em;
+        opacity: 0;
+      }
+      .big-line .accent {
+        color: #ff8a52;
+      }
+
+      /* ---------- brand lockups ---------- */
+      .lockup {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .lockup .row {
+        display: flex;
+        align-items: center;
+        gap: 44px;
+      }
+      .lockup .logo {
+        display: block;
+        width: 230px;
+        height: 230px;
+      }
+      .lockup .wordmark {
+        display: block;
+        font-family: "Cal Sans", sans-serif;
+        font-size: 230px;
+        line-height: 1;
+        letter-spacing: -0.03em;
+      }
+      .meet {
+        display: block;
+        font-family: "Onest", sans-serif;
+        font-weight: 500;
+        font-size: 64px;
+        letter-spacing: 0.02em;
+        color: rgba(255, 255, 255, 0.72);
+        margin-bottom: 34px;
+      }
+      .burst {
+        position: absolute;
+        left: 560px;
+        top: 140px;
+        width: 800px;
+        height: 800px;
+        background: url("assets/bg/glow.png") center / contain no-repeat;
+      }
+      .end .wordmark {
+        color: var(--ink);
+      }
+      .end .tag {
+        display: block;
+        margin-top: 46px;
+        font-family: "Onest", sans-serif;
+        font-weight: 500;
+        font-size: 64px;
+        letter-spacing: -0.01em;
+        color: #413935;
+      }
+      .end .cta {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        margin-top: 60px;
+        padding: 30px 64px 32px 52px;
+        border-radius: 999px;
+        background: var(--orange);
+        box-shadow: 0 30px 70px -24px rgba(226, 78, 16, 0.75);
+        font-family: "Cal Sans", sans-serif;
+        font-size: 66px;
+        color: var(--white);
+      }
+      .end .cta .live {
+        display: block;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--white);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="60"
+      data-fps="30"
+      data-width="1920"
+      data-height="1080"
+    >
+      <audio id="bgm" src="assets/audio/beat.m4a" data-start="0" data-duration="60" data-track-index="20" data-volume="1"></audio>
+
+      <!-- 01 hook: 192 pages -->
+      <section id="s01" class="clip scene" data-start="0" data-duration="2" data-track-index="0">
+        <div class="ground dark"></div>
+        <div class="count-wrap" id="s01-wrap">
+          <span id="hook-num">0</span>
+          <span id="hook-pages">pages.</span>
+        </div>
+      </section>
+
+      <!-- 02 hook: the document, page counter -->
+      <section id="s02" class="clip scene" data-start="2" data-duration="2" data-track-index="0">
+        <div class="ground light"></div>
+        <div class="cam" id="cam02" data-layout-allow-overflow>
+          <img class="shot" src="assets/screens/document.png" alt="Grasp document reader, page 1 of 192" />
+          <div class="ring" id="ring02" style="left: 846px; top: 956px; width: 126px; height: 44px"></div>
+        </div>
+        <div class="scrim-bottom" id="s02-scrim"></div>
+        <div class="big-line" id="s02-line">Due <span class="accent">Friday.</span></div>
+      </section>
+
+      <!-- 03 hook: where do you even start -->
+      <section id="s03" class="clip scene" data-start="4" data-duration="2" data-track-index="0">
+        <div class="ground dark"></div>
+        <div class="words">
+          <span class="w" id="s03-w1">Where</span>
+          <span class="w" id="s03-w2">do you</span>
+          <span class="w" id="s03-w3">even</span>
+          <span class="w accent" id="s03-w4">start?</span>
+        </div>
+      </section>
+
+      <!-- 04 reveal -->
+      <section id="s04" class="clip scene" data-start="6" data-duration="2" data-track-index="0">
+        <div class="ground dark"></div>
+        <div class="burst" id="s04-burst"></div>
+        <div class="lockup">
+          <span class="meet" id="s04-meet">Meet</span>
+          <div class="row">
+            <img class="logo" id="s04-logo" src="assets/grasp-logo.svg" alt="Grasp logo" />
+            <span class="wordmark" id="s04-word">Grasp</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 05 home -->
+      <section id="s05" class="clip scene" data-start="8" data-duration="4" data-track-index="0">
+        <div class="ground light"></div>
+        <div class="cam" id="cam05" data-layout-allow-overflow>
+          <img class="shot" src="assets/screens/home.png" alt="Grasp home: What do you want to learn?" />
+          <div class="ring" id="ring05" style="left: 436px; top: 250px; width: 840px; height: 290px"></div>
+        </div>
+        <div class="cap"><div class="pill" id="cap05"><span class="dot"></span>Bring whatever you're learning from.</div></div>
+      </section>
+
+      <!-- 06 sources -->
+      <section id="s06" class="clip scene" data-start="12" data-duration="2" data-track-index="0">
+        <div class="ground orange"></div>
+        <div class="stack">
+          <span class="w" id="s06-w1">PDFs.</span>
+          <span class="w" id="s06-w2">Videos.</span>
+          <span class="w" id="s06-w3">Podcasts.</span>
+          <span class="w" id="s06-w4">Links.</span>
+        </div>
+      </section>
+
+      <!-- 07 record -->
+      <section id="s07" class="clip scene" data-start="14" data-duration="4" data-track-index="0">
+        <div class="ground light"></div>
+        <div class="cam" id="cam07" data-layout-allow-overflow>
+          <img class="shot" src="assets/screens/record.png" alt="Grasp recording a class live, 12:48" />
+          <div class="ring" id="ring07" style="left: 344px; top: 412px; width: 576px; height: 252px"></div>
+        </div>
+        <div class="cap"><div class="pill" id="cap07"><span class="dot"></span>Or record the class <em>as it happens.</em></div></div>
+      </section>
+
+      <!-- 08 video summary -->
+      <section id="s08" class="clip scene" data-start="18" data-duration="4" data-track-index="0">
+        <div class="ground light"></div>
+        <div class="cam" id="cam08" data-layout-allow-overflow>
+          <img class="shot" src="assets/screens/video-summary.png" alt="Grasp video summary with chapters" />
+          <div class="ring" id="ring08" style="left: 1008px; top: 512px; width: 404px; height: 280px"></div>
+        </div>
+        <div class="cap"><div class="pill" id="cap08"><span class="dot"></span>A 40-minute lecture, summed up by section.</div></div>
+      </section>
+
+      <!-- 09 prove it -->
+      <section id="s09" class="clip scene" data-start="22" data-duration="2" data-track-index="0">
+        <div class="ground dark"></div>
+        <div class="words">
+          <span class="w" id="s09-w1">Now</span>
+          <span class="w" id="s09-w2">prove</span>
+          <span class="w" id="s09-w3">you</span>
+          <span class="w accent" id="s09-w4">get it.</span>
+        </div>
+      </section>
+
+      <!-- 10 quiz -->
+      <section id="s10" class="clip scene" data-start="24" data-duration="4" data-track-index="0">
+        <div class="ground light"></div>
+        <div class="cam" id="cam10" data-layout-allow-overflow>
+          <img class="shot" src="assets/screens/quiz-question.png" alt="Grasp quiz, question 1" />
+          <div class="ring" id="ring10" style="left: 996px; top: 150px; width: 432px; height: 516px"></div>
+        </div>
+        <div class="cap"><div class="pill" id="cap10"><span class="dot"></span>Quizzes built from <em>your own material.</em></div></div>
+      </section>
+
+      <!-- 11 answer reveal -> page chip -> source paragraph -->
+      <section id="s11" class="clip scene" data-start="28" data-duration="5" data-track-index="0">
+        <div class="ground light"></div>
+        <div class="cam" id="cam11" data-layout-allow-overflow>
+          <img class="shot" src="assets/screens/quiz-reveal.png" alt="Grasp wrong-answer explanation citing page 1" />
+          <div class="ring" id="ring11a" style="left: 998px; top: 652px; width: 428px; height: 198px"></div>
+          <div class="ring" id="ring11b" style="left: 1326px; top: 671px; width: 86px; height: 40px"></div>
+          <div class="ring" id="ring11c" style="left: 302px; top: 568px; width: 656px; height: 112px"></div>
+        </div>
+        <div class="cap"><div class="pill" id="cap11a"><span class="dot"></span>Wrong? It shows you <em>why.</em></div></div>
+        <div class="cap"><div class="pill" id="cap11b"><span class="dot"></span>Straight from <em>page 1</em> of your source.</div></div>
+      </section>
+
+      <!-- 12 no guessing -->
+      <section id="s12" class="clip scene" data-start="33" data-duration="2" data-track-index="0">
+        <div class="ground orange"></div>
+        <div class="words">
+          <span class="w" id="s12-w1">No guessing.</span>
+          <span class="w" id="s12-w2">Just the source.</span>
+        </div>
+      </section>
+
+      <!-- 13 flashcards -->
+      <section id="s13" class="clip scene" data-start="35" data-duration="4" data-track-index="0">
+        <div class="ground light"></div>
+        <div class="cam" id="cam13" data-layout-allow-overflow>
+          <img class="shot" src="assets/screens/flashcard.png" alt="Grasp flashcard" />
+          <div class="ring" id="ring13" style="left: 998px; top: 306px; width: 428px; height: 634px"></div>
+        </div>
+        <div class="cap"><div class="pill" id="cap13"><span class="dot"></span>Flashcards that make it <em>stick.</em></div></div>
+      </section>
+
+      <!-- 14 results -->
+      <section id="s14" class="clip scene" data-start="39" data-duration="4" data-track-index="0">
+        <div class="ground light"></div>
+        <div class="cam" id="cam14" data-layout-allow-overflow>
+          <img class="shot" src="assets/screens/quiz-results.png" alt="Grasp quiz results, 85% accuracy" />
+          <div class="ring" id="ring14" style="left: 996px; top: 210px; width: 432px; height: 182px"></div>
+        </div>
+        <div class="cap"><div class="pill" id="cap14"><span class="dot"></span>See what you <em>actually</em> know.</div></div>
+      </section>
+
+      <!-- 15 streak -->
+      <section id="s15" class="clip scene" data-start="43" data-duration="4" data-track-index="0">
+        <div class="ground light"></div>
+        <div class="cam" id="cam15" data-layout-allow-overflow>
+          <img class="shot" src="assets/screens/streak.png" alt="Grasp 3 day streak" />
+          <div class="ring" id="ring15" style="left: 444px; top: 478px; width: 554px; height: 260px"></div>
+        </div>
+        <div class="cap"><div class="pill" id="cap15"><span class="dot"></span>Come back tomorrow. <em>Keep the streak.</em></div></div>
+      </section>
+
+      <!-- 16 library -->
+      <section id="s16" class="clip scene" data-start="47" data-duration="3" data-track-index="0">
+        <div class="ground light"></div>
+        <div class="cam" id="cam16" data-layout-allow-overflow>
+          <img class="shot" src="assets/screens/library.png" alt="Grasp library grid" />
+        </div>
+        <div class="cap"><div class="pill" id="cap16"><span class="dot"></span>Everything you learn, <em>in one place.</em></div></div>
+      </section>
+
+      <!-- 17 close -->
+      <section id="s17" class="clip scene" data-start="50" data-duration="4" data-track-index="0">
+        <div class="ground dark"></div>
+        <div class="words" id="s17-a">
+          <span class="w" id="s17-w1">Get</span>
+          <span class="w" id="s17-w2">through</span>
+          <span class="w" id="s17-w3">it.</span>
+        </div>
+        <div class="words" id="s17-b">
+          <span class="w" id="s17-w4">Actually</span>
+          <span class="w accent" id="s17-w5">understand</span>
+          <span class="w" id="s17-w6">it.</span>
+        </div>
+      </section>
+
+      <!-- 18 end card -->
+      <section id="s18" class="clip scene end" data-start="54" data-duration="6" data-track-index="0">
+        <div class="ground light"></div>
+        <div class="burst" id="s18-glow"></div>
+        <div class="lockup">
+          <div class="row">
+            <img class="logo" id="s18-logo" src="assets/grasp-logo.svg" alt="Grasp logo" />
+            <span class="wordmark" id="s18-word">Grasp</span>
+          </div>
+          <span class="tag" id="s18-tag">Learn smarter. Grasp anything.</span>
+          <div class="cta" id="s18-cta"><span class="live" id="s18-live"></span>Coming soon</div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const W = 1920;
+      const H = 1080;
+      // Camera: put screen point (px, py) — in the 1440x1024 design space — at frame centre, at scale s.
+      const at = (px, py, s) => ({ x: W / 2 - px * s, y: H / 2 - py * s, scale: s });
+      const WIDE = 0.97;
+
+      // Rings keep a constant ~4px stroke on screen whatever the zoom.
+      const ringScale = { ring02: 3.0, ring05: 1.75, ring07: 2.0, ring08: 1.75, ring10: 1.9, ring11a: 2.0, ring11b: 3.4, ring11c: 1.9, ring13: 1.55, ring14: 2.4, ring15: 1.45 };
+      for (const [id, s] of Object.entries(ringScale)) {
+        const r = document.getElementById(id);
+        r.style.borderWidth = 4 / s + "px";
+        r.style.borderRadius = 14 / s + "px";
+      }
+
+      const tl = gsap.timeline({ paused: true });
+
+      // A screen enters on the beat: punch in from a blurred, oversized frame to the wide shot.
+      function enter(cam, t0) {
+        tl.fromTo(
+          cam,
+          { ...at(720, 512, WIDE * 1.22), filter: "blur(16px)" },
+          { ...at(720, 512, WIDE), filter: "blur(0px)", duration: 0.45, ease: "expo.out" },
+          t0
+        );
+      }
+      // Camera move from one framing to another.
+      function move(cam, from, to, t, dur = 0.7, ease = "expo.inOut") {
+        tl.fromTo(cam, at(...from), { ...at(...to), duration: dur, ease, immediateRender: false }, t);
+      }
+      // Slow push while holding, so a frame never freezes.
+      function drift(cam, p, t, until, k = 1.045) {
+        tl.fromTo(cam, at(p[0], p[1], p[2]), { ...at(p[0], p[1], p[2] * k), duration: until - t, ease: "none", immediateRender: false }, t);
+      }
+      function ring(id, t) {
+        tl.fromTo("#" + id, { opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 0.35, ease: "power3.out" }, t);
+      }
+      function ringOut(id, t) {
+        tl.to("#" + id, { opacity: 0, duration: 0.2, ease: "power2.in" }, t);
+      }
+      function cap(id, t) {
+        tl.fromTo("#" + id, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, t);
+      }
+      function capOut(id, t) {
+        tl.to("#" + id, { y: -30, opacity: 0, duration: 0.25, ease: "power2.in" }, t);
+      }
+      // A word slams in on the beat.
+      function slam(sel, t, from = 1.6) {
+        tl.fromTo(sel, { scale: from, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.32, ease: "expo.out" }, t);
+      }
+      const W0 = [720, 512, WIDE];
+
+      // 01 — 192 pages (0–2)
+      const counter = { v: 0 };
+      const numEl = document.getElementById("hook-num");
+      tl.fromTo(
+        counter,
+        { v: 0 },
+        {
+          v: 192,
+          duration: 0.95,
+          ease: "power2.in",
+          onUpdate: () => {
+            numEl.textContent = String(Math.round(counter.v));
+          },
+        },
+        0.0
+      );
+      tl.fromTo("#hook-num", { scale: 0.7 }, { scale: 1, duration: 0.95, ease: "power2.in" }, 0.0);
+      tl.fromTo("#hook-num", { scale: 1.12 }, { scale: 1, duration: 0.3, ease: "expo.out", immediateRender: false }, 1.0);
+      slam("#hook-pages", 1.0, 1.4);
+      tl.fromTo("#s01-wrap", { x: -14 }, { x: 0, duration: 0.25, ease: "elastic.out(1.2, 0.3)" }, 1.0);
+      tl.fromTo("#s01-wrap", { scale: 1 }, { scale: 1.05, duration: 0.95, ease: "none", immediateRender: false }, 1.0);
+
+      // 02 — the document says "of 192" (2–4)
+      enter("#cam02", 2.0);
+      move("#cam02", W0, [912, 978, 3.0], 2.45, 0.55);
+      ring("ring02", 3.0);
+      drift("#cam02", [912, 978, 3.0], 3.0, 3.98, 1.06);
+      tl.fromTo("#s02-scrim", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 3.0);
+      tl.fromTo("#s02-line", { x: -80, opacity: 0 }, { x: 0, opacity: 1, duration: 0.35, ease: "expo.out" }, 3.0);
+
+      // 03 — Where do you even start? (4–6)
+      slam("#s03-w1", 4.0);
+      slam("#s03-w2", 4.5);
+      slam("#s03-w3", 5.0);
+      slam("#s03-w4", 5.5, 2.0);
+
+      // 04 — Meet Grasp (6–8)
+      tl.fromTo("#s04-burst", { scale: 0.2, opacity: 0 }, { scale: 1.5, opacity: 1, duration: 0.7, ease: "expo.out" }, 6.0);
+      tl.fromTo("#s04-logo", { scale: 0, rotation: -25 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.8)" }, 6.0);
+      tl.fromTo("#s04-word", { x: -60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.45, ease: "expo.out" }, 6.25);
+      tl.fromTo("#s04-meet", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 6.5);
+      tl.fromTo("#s04-burst", { scale: 1.5 }, { scale: 1.7, duration: 1.0, ease: "none", immediateRender: false }, 6.95);
+
+      // 05 — home: bring anything (8–12)
+      enter("#cam05", 8.0);
+      move("#cam05", W0, [856, 395, 1.75], 8.5);
+      ring("ring05", 9.15);
+      cap("cap05", 9.25);
+      drift("#cam05", [856, 395, 1.75], 9.2, 11.98);
+
+      // 06 — PDFs. Videos. Podcasts. Links. (12–14), one per beat
+      ["#s06-w1", "#s06-w2", "#s06-w3", "#s06-w4"].forEach((sel, i) => {
+        const t = 12 + i * 0.5;
+        slam(sel, t, 1.5);
+        if (i < 3) tl.to(sel, { opacity: 0, scale: 0.85, duration: 0.12, ease: "power2.in" }, t + 0.38);
+      });
+
+      // 07 — record (14–18)
+      enter("#cam07", 14.0);
+      move("#cam07", W0, [632, 538, 2.0], 14.5);
+      ring("ring07", 15.15);
+      cap("cap07", 15.25);
+      drift("#cam07", [632, 538, 2.0], 15.2, 17.98);
+
+      // 08 — video summary: video, then the summary panel (18–22)
+      enter("#cam08", 18.0);
+      move("#cam08", W0, [632, 420, 1.45], 18.5);
+      move("#cam08", [632, 420, 1.45], [1210, 600, 1.75], 19.5, 0.8);
+      ring("ring08", 20.25);
+      cap("cap08", 20.3);
+      drift("#cam08", [1210, 600, 1.75], 20.3, 21.98, 1.03);
+
+      // 09 — Now prove you get it. (22–24)
+      slam("#s09-w1", 22.0);
+      slam("#s09-w2", 22.5);
+      slam("#s09-w3", 23.0);
+      slam("#s09-w4", 23.5, 2.0);
+
+      // 10 — quiz question (24–28)
+      enter("#cam10", 24.0);
+      move("#cam10", W0, [1212, 408, 1.9], 24.5);
+      ring("ring10", 25.15);
+      cap("cap10", 25.25);
+      drift("#cam10", [1212, 408, 1.9], 25.2, 27.98, 1.035);
+
+      // 11 — wrong answer → page chip → the source paragraph (28–33)
+      enter("#cam11", 28.0);
+      move("#cam11", W0, [1212, 752, 2.0], 28.5);
+      ring("ring11a", 29.15);
+      cap("cap11a", 29.2);
+      ringOut("ring11a", 30.3);
+      move("#cam11", [1212, 752, 2.0], [1369, 691, 3.4], 30.5, 0.5, "expo.out");
+      ring("ring11b", 30.75);
+      capOut("cap11a", 30.75);
+      move("#cam11", [1369, 691, 3.4], [630, 624, 1.9], 31.5, 0.75);
+      ringOut("ring11b", 31.5);
+      ring("ring11c", 32.1);
+      cap("cap11b", 31.0);
+      drift("#cam11", [630, 624, 1.9], 32.25, 32.98, 1.02);
+
+      // 12 — No guessing. Just the source. (33–35)
+      slam("#s12-w1", 33.0, 1.4);
+      slam("#s12-w2", 34.0, 1.4);
+
+      // 13 — flashcards (35–39)
+      enter("#cam13", 35.0);
+      move("#cam13", W0, [1212, 600, 1.55], 35.5);
+      ring("ring13", 36.15);
+      cap("cap13", 36.25);
+      drift("#cam13", [1212, 600, 1.55], 36.2, 38.98, 1.04);
+
+      // 14 — results (39–43)
+      enter("#cam14", 39.0);
+      move("#cam14", W0, [1212, 330, 2.4], 39.5);
+      ring("ring14", 40.15);
+      cap("cap14", 40.25);
+      drift("#cam14", [1212, 330, 2.4], 40.2, 42.98, 1.04);
+
+      // 15 — streak (43–47)
+      enter("#cam15", 43.0);
+      move("#cam15", W0, [720, 560, 1.45], 43.5);
+      ring("ring15", 44.15);
+      cap("cap15", 44.25);
+      drift("#cam15", [720, 560, 1.45], 44.2, 46.98, 1.04);
+
+      // 16 — library pan (47–50)
+      enter("#cam16", 47.0);
+      move("#cam16", W0, [560, 420, 1.22], 47.5, 0.6);
+      tl.fromTo("#cam16", at(560, 420, 1.22), { ...at(900, 560, 1.22), duration: 1.88, ease: "power1.inOut", immediateRender: false }, 48.1);
+      cap("cap16", 48.0);
+
+      // 17 — Get through it. Actually understand it. (50–54)
+      slam("#s17-w1", 50.0);
+      slam("#s17-w2", 50.5);
+      slam("#s17-w3", 51.0);
+      tl.to("#s17-a", { opacity: 0, y: -40, duration: 0.2, ease: "power2.in" }, 51.8);
+      slam("#s17-w4", 52.0);
+      slam("#s17-w5", 52.5, 1.8);
+      slam("#s17-w6", 53.0);
+      tl.fromTo("#s17-b", { scale: 1 }, { scale: 1.06, duration: 0.95, ease: "power2.in" }, 53.0);
+
+      // 18 — end card (54–60)
+      tl.fromTo("#s18-glow", { scale: 0.6, opacity: 0 }, { scale: 2.1, opacity: 0.45, duration: 1.2, ease: "expo.out" }, 54.0);
+      tl.fromTo("#s18-logo", { scale: 0, rotation: -25 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.8)" }, 54.0);
+      tl.fromTo("#s18-word", { x: -60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.45, ease: "expo.out" }, 54.25);
+      tl.fromTo("#s18-tag", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" }, 55.0);
+      tl.fromTo("#s18-cta", { y: 30, scale: 0.9, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.6)" }, 56.0);
+      tl.fromTo("#s18-live", { opacity: 1 }, { opacity: 0.25, duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 5 }, 56.5);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
